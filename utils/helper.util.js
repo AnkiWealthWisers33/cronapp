@@ -1,6 +1,7 @@
 const probe = require("node-ffprobe");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
+var fs = require("fs");
 
 const ffprobeInstaller = require("@ffprobe-installer/ffprobe");
 probe.FFPROBE_PATH = ffprobeInstaller.path;
@@ -36,6 +37,7 @@ async function processVideo(file) {
     .output("processed\\video\\" + file.filename)
     .on("progress", (progress) => console.log(progress))
     .on("end", function () {
+      fs.unlinkSync(file.path);
       console.log("Finished processing");
     })
     .run();
@@ -53,6 +55,8 @@ async function processAudio(file) {
     .output("processed\\audio\\" + file.filename)
     .on("progress", (progress) => console.log(progress))
     .on("end", function () {
+      fs.unlinkSync(file.path);
+
       console.log("Finished processing");
     })
     .run();

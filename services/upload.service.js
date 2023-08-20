@@ -1,4 +1,4 @@
-const { getDataResolution } = require("../utils/helper.util");
+const { getDataResolution, processData } = require("../utils/helper.util");
 const fs = require("fs");
 
 async function getData() {
@@ -9,7 +9,6 @@ async function getData() {
 }
 
 async function createData(file) {
-  console.log("create data :> ", file);
   const type = file.mimetype.split("/")[0];
   if (type == "image") return { Status: "Success", Message: "Image Uploaded!" };
 
@@ -31,6 +30,8 @@ async function createData(file) {
 
     return { status: "success", message: type + " Uploaded!" };
   }
+  console.log("ready to convert");
+  await processData(type, file);
 
   return { type };
 }

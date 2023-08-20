@@ -28,6 +28,7 @@ async function createData(file) {
       }
       console.log("file is moved successfully");
     });
+
     return { status: "success", message: type + " Uploaded!" };
   }
 

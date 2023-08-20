@@ -23,12 +23,12 @@ const getDataResolution = async (type, path) => {
 };
 
 //to process the video to 360p
-function processVideo(localTempPath) {
+async function processVideo(localTempPath) {
   console.log("local file :> ", localTempPath);
   const stream = bufferToStream(localTempPath.buffer);
   ffmpeg()
-    // .input("vid.mp4")
-    .input(stream)
+    .input("vid.mp4")
+    // .input(stream)
 
     .withVideoCodec("libx264")
     .withSize("480x360")

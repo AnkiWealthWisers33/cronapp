@@ -23,20 +23,34 @@ const getDataResolution = async (type, path) => {
 };
 
 //to process the video to 360p
-async function processVideo(localTempPath) {
-  console.log("local file :> ", localTempPath);
-  const stream = bufferToStream(localTempPath.buffer);
+async function processVideo(file) {
   ffmpeg()
-    .input("vid.mp4")
+    .input(file.path)
     // .input(stream)
-
     .withVideoCodec("libx264")
     .withSize("480x360")
     // .withOutputFormat("avi")
     .on("error", (error) => {
       console.log("error :> ", error);
     })
-    .output("converted.mp4")
+    .output("processed\\video\\" + file.filename)
+    .on("progress", (progress) => console.log(progress))
+    .on("end", function () {
+      console.log("Finished processing");
+    })
+    .run();
+}
+//to process audio
+async function processAudio(file) {
+  ffmpeg()
+    .input(file.path)
+    .withAudioCodec("libmp3lame")
+    .withAudioBitrate("128k")
+    // .withOutputFormat("avi")
+    .on("error", (error) => {
+      console.log("error :> ", error);
+    })
+    .output("processed\\audio\\" + file.filename)
     .on("progress", (progress) => console.log(progress))
     .on("end", function () {
       console.log("Finished processing");
@@ -44,6 +58,15 @@ async function processVideo(localTempPath) {
     .run();
 }
 
+const processData = async (type, file) => {
+  console.log("file data :> ", file);
+  console.log("type :> ", type);
+  if (type == "video") {
+    await processVideo(file);
+  } else {
+    await processAudio(file);
+  }
+};
 //if image sending the file directly to the image folder
 const getStorePath = (file) => {
   const type = file.mimetype.split("/")[0];
@@ -51,4 +74,4 @@ const getStorePath = (file) => {
   return path;
 };
 
-module.exports = { getDataResolution, getStorePath };
+module.exports = { getDataResolution, getStorePath, processData };

@@ -3,6 +3,7 @@ const uploadRoute = require("./routes/upload.route");
 
 const app = express();
 const PORT = 3000;
+// const arr = [];
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -24,3 +25,5 @@ app.listen(PORT, (error) => {
     );
   else console.log("Error occurred, server can't start", error);
 });
+
+// module.exports = { arr };

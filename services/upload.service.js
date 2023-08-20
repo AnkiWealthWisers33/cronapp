@@ -1,9 +1,11 @@
+// const { arr } = require("../app");
 const { getDataResolution, processData } = require("../utils/helper.util");
+
 const fs = require("fs");
 
 async function getData() {
   return {
-    data: [1, 2, 3],
+    data: arr,
     message: "hello user!",
   };
 }
@@ -31,8 +33,9 @@ async function createData(file) {
     return { status: "success", message: type + " Uploaded!" };
   }
   console.log("ready to convert");
-  await processData(type, file);
 
+  // await processData(type, file);
+  // arr.push(file.filename);
   return { type };
 }
 

@@ -1,8 +1,20 @@
 const express = require("express");
+const cron = require("node-cron");
+
 const uploadRoute = require("./routes/upload.route");
+const { filesList } = require("./utils/helper.util");
 
 const app = express();
 const PORT = 3000;
+var syncCron = {
+  running: true,
+};
+cron.schedule("0 */15 * * * *", async function () {
+  console.log("---------------------", syncCron);
+  if (syncCron.running) await filesList(syncCron);
+  // running = false;
+  console.log("running a task every 15 seconds");
+});
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

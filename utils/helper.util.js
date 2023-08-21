@@ -23,24 +23,37 @@ const getDataResolution = async (type, path) => {
   return resolution;
 };
 
+//get codec type
+const getCodecType = async (path) => {
+  var codecType = null
+  await probe('uploads\\'+path).then((probeData) => {
+    codecType = probeData.streams[0].codec_type
+  })
+  return codecType;
+
+}
 //to process the video to 360p
 async function processVideo(file) {
-  ffmpeg()
-    .input(file.path)
-    // .input(stream)
-    .withVideoCodec("libx264")
-    .withSize("480x360")
-    // .withOutputFormat("avi")
-    .on("error", (error) => {
-      console.log("error :> ", error);
-    })
-    .output("processed\\video\\" + file.filename)
-    .on("progress", (progress) => console.log(progress))
-    .on("end", function () {
-      fs.unlinkSync(file.path);
-      console.log("Finished processing");
-    })
-    .run();
+  return new Promise((resolve, reject) => {
+    ffmpeg()
+      .input(file.path)
+      // .input(stream)
+      .withVideoCodec("libx264")
+      .withSize("480x360")
+      // .withOutputFormat("avi")
+      .on("error", (error) => {
+        console.log("error :> ", error);
+        reject(new Error(error))
+      })
+      .output("processed\\video\\" + file.filename)
+      .on("progress", (progress) => console.log(progress))
+      .on("end", function () {
+        fs.unlinkSync(file.path);
+        console.log("Finished processing");
+        resolve()
+      })
+      .run();
+  })
 }
 //to process audio
 async function processAudio(file) {
@@ -71,6 +84,35 @@ const processData = async (type, file) => {
     await processAudio(file);
   }
 };
+
+//get files list in a folder
+const filesList = async (syncCron) => {
+  const filesPath = "./uploads/"
+  syncCron.running = false
+
+  return new Promise((resolve, reject) => {
+
+    fs.readdir(filesPath, (err, files) => {
+      files.forEach(async (file) => {
+        const type = await getCodecType(file)
+        const fileData = {
+          filename: file,
+          path:"uploads\\"+file
+        }
+        console.log('------------------------------------------------------------------')
+        console.log(fileData)
+        if (type == "video") {
+          await processVideo(fileData);
+        } else {
+          await processAudio(fileData);
+        }
+      })
+    })
+    // syncCron.running= true
+
+    resolve()
+  })
+}
 //if image sending the file directly to the image folder
 const getStorePath = (file) => {
   const type = file.mimetype.split("/")[0];
@@ -78,4 +120,4 @@ const getStorePath = (file) => {
   return path;
 };
 
-module.exports = { getDataResolution, getStorePath, processData };
+module.exports = { getDataResolution, getStorePath, processData,filesList };

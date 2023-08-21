@@ -13,7 +13,7 @@ cron.schedule("0 */15 * * * *", async function () {
   console.log("---------------------", syncCron);
   if (syncCron.running) await filesList(syncCron);
   // running = false;
-  console.log("running a task every 15 seconds");
+  console.log("running a task every 60 seconds");
 });
 
 app.use((req, res, next) => {

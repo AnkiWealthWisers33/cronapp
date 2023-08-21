@@ -87,31 +87,32 @@ const processData = async (type, file) => {
 
 //get files list in a folder
 const filesList = async (syncCron) => {
-  const filesPath = "./uploads/"
-  syncCron.running = false
+  const filesPath = "./uploads/";
+  // syncCron.running = false
 
   return new Promise((resolve, reject) => {
-
     fs.readdir(filesPath, (err, files) => {
       files.forEach(async (file) => {
-        const type = await getCodecType(file)
+        const type = await getCodecType(file);
         const fileData = {
           filename: file,
-          path:"uploads\\"+file
-        }
-        console.log('------------------------------------------------------------------')
-        console.log(fileData)
+          path: "uploads\\" + file,
+        };
+        console.log(
+          "------------------------------------------------------------------"
+        );
+        console.log(fileData);
         if (type == "video") {
           await processVideo(fileData);
         } else {
           await processAudio(fileData);
         }
-      })
-    })
+      });
+    });
     // syncCron.running= true
 
-    resolve()
-  })
+    resolve();
+  });
 }
 //if image sending the file directly to the image folder
 const getStorePath = (file) => {
